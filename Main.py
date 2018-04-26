@@ -5,9 +5,14 @@ from reader import DatasetFactory
 
 
 def Main():
-
-
-    fileNameArray = ["ice (1).csv"]
+    fileNameArray = [
+        {
+            "path": "RawData\\OpenBCI-RAW-k2_with_class.csv", # filename
+            "with_vector": False, # include or exclude x,y,z vector
+            "time_to_remove_from_start": "0.0", # In seconds
+            "time_to_remove_from_end": "1.0" # In seconds
+        }
+    ]
     dataSet = DatasetFactory(fileNameArray)
     X_train = dataSet.data[0].X_train
     X_test = dataSet.data[0].X_test
