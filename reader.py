@@ -63,6 +63,7 @@ class PreProcessData(object):
     Sets object's data frames according to file
     '''
     def prepare_data(self):
+        self.df = self.df.Series(index=[0,1,2,3,4,5,6,7]).convert_objects(convert_numeric=True)
         print(self.df)
         features = self.df.values[:, :8]
         target = self.df.values[:, 8]
@@ -82,3 +83,19 @@ class PreProcessData(object):
             mean, std = self.df[each].mean(), self.df[each].std()
             scaled_features[each] = [mean, std]
             self.df.loc[:, each] = (self.df[each] - mean) / std
+
+    '''
+    Adds a column with string value to csv
+    '''
+
+    
+class ClassifyCsv(object):
+
+    def __init__(self, path, class_value):
+        df = pd.read_csv(path, delimiter=", ", engine="python", header=None)
+        df.columns = ['index', 'channel1', 'channel2', 'channel3', 'channel4', 'channel5', 'channel6',
+                      'channel7', 'channel8', 'x', 'y', 'z', 'timestamp']
+        df['class'] = pd.Series(class_value, index=df.index)
+        df.to_csv(path, index=False)
+ClassifyCsv('ice.csv', 'True')
+ClassifyCsv('no_ice.csv', 'False')
