@@ -37,7 +37,6 @@ class PreProcessData(object):
         # df.columns = ['index', 'channel1', 'channel2', 'channel3', 'channel4', 'channel5', 'channel6',
         #               'channel7', 'channel8', 'x', 'y', 'z', 'timestamp']
         # TODO: Add the following once ready, 'temp', 'class']
-        print(df['timestamp'])
         self.filter_df_by_time(df, time_from, time_to)
 
         df.drop(['index', 'timestamp'], axis='columns', inplace=True)
@@ -75,7 +74,6 @@ class PreProcessData(object):
                 invalid_indices.append(i)
 
         df.drop(invalid_indices, axis='index', inplace=True)
-        print(df['timestamp'])
 
 
     '''
