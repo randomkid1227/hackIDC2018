@@ -30,14 +30,14 @@ class PreProcessData(object):
     Returns a data set of the object's path without
     '''
     def parse_file(self, vector=True):
-        df = pd.read_csv(self.path, delimiter=",", engine="python", header=None)
+        df = pd.read_csv(self.path, delimiter=",", engine="python")
         # df.columns = ['index', 'channel1', 'channel2', 'channel3', 'channel4', 'channel5', 'channel6',
         #               'channel7', 'channel8', 'x', 'y', 'z', 'timestamp']
         # TODO: Add the following once ready, 'temp', 'class']
-
-        df.drop([0, 12], axis=1, inplace=True)
+        print(df)
+        df.drop(['index', 'timestamp'], axis=1, inplace=True)
         if not vector:
-            df.drop([11,  10, 9], axis=1, inplace=True)
+            df.drop(['x',  'y', 'z'], axis=1, inplace=True)
         return df
 
     # def set_class(self, df):
@@ -63,7 +63,7 @@ class PreProcessData(object):
     Sets object's data frames according to file
     '''
     def prepare_data(self):
-        self.df = self.df.Series(index=[0,1,2,3,4,5,6,7]).convert_objects(convert_numeric=True)
+        # self.df = self.df.Series(index=[0,1,2,3,4,5,6,7]).convert_objects(convert_numeric=True)
         print(self.df)
         features = self.df.values[:, :8]
         target = self.df.values[:, 8]
@@ -97,5 +97,5 @@ class ClassifyCsv(object):
                       'channel7', 'channel8', 'x', 'y', 'z', 'timestamp']
         df['class'] = pd.Series(class_value, index=df.index)
         df.to_csv(path, index=False)
-ClassifyCsv('ice.csv', 'True')
-ClassifyCsv('no_ice.csv', 'False')
+# ClassifyCsv('ice.csv', 'True')
+# ClassifyCsv('no_ice.csv', 'False')

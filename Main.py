@@ -14,7 +14,7 @@ def Main():
     y_train = dataSet.data[0].y_train
     y_test = dataSet.data[0].y_test
 
-    NaiveBayseModel(X_train, X_test, y_train, y_test)
+    NaiveBayseModel(X_train, y_train, X_test, y_test)
     LinearSvmModel(X_train, X_test, y_train, y_test)
     RandomForest(X_train, X_test, y_train, y_test)
 
