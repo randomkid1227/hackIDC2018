@@ -14,12 +14,13 @@ class DatasetFactory(object):
             self.data.append(PreProcessData(file_entry["path"],
                                             file_entry["with_vector"],
                                             file_entry["time_to_remove_from_start"],
-                                            file_entry["time_to_remove_from_end"]))
+                                            file_entry["time_to_remove_from_end"],
+                                            file_entry["enable"]))
 
 class PreProcessData(object):
-    def __init__(self, path, with_vector, time_from="0.0", time_to="0.0"):
+    def __init__(self, path, with_vector, time_from="0.0", time_to="0.0", en = False):
         self.path = path
-        self.df = self.parse_file(with_vector, time_from, time_to)
+        self.df = self.parse_file(with_vector, time_from, time_to, en=en)
         self.X_train = None
         self.X_test = None
         self.y_train = None
@@ -32,12 +33,13 @@ class PreProcessData(object):
                            False - Remove attributes [x,y,z]
     Returns a data set of the object's path without
     '''
-    def parse_file(self, vector=True, time_from="0.0", time_to="0.0"):
+
+    def parse_file(self, vector=True, time_from="0.0", time_to="0.0", en=False):
         df = pd.read_csv(self.path, delimiter=",", engine="python")
         # df.columns = ['index', 'channel1', 'channel2', 'channel3', 'channel4', 'channel5', 'channel6',
         #               'channel7', 'channel8', 'x', 'y', 'z', 'timestamp']
         # TODO: Add the following once ready, 'temp', 'class']
-        self.filter_df_by_time(df, time_from, time_to)
+        self.filter_df_by_time(df, time_from, time_to, en)
 
         df.drop(['index', 'timestamp'], axis='columns', inplace=True)
         if not vector:
@@ -50,7 +52,9 @@ class PreProcessData(object):
     '''
         Filters a data frame to some delta of time (from,to)
     '''
-    def filter_df_by_time(self, df, time_from="0.0", time_to="0.0"):
+    def filter_df_by_time(self, df, time_from="0.0", time_to="0.0", en=False):
+        if not en:
+            return
         def parse_time_to_datetime(time_string):
             return datetime.datetime.strptime(time_string, Constants.TIMESTAMP_FMT)
 
@@ -62,7 +66,7 @@ class PreProcessData(object):
             return s_time, e_time
 
         start_time = parse_time_to_datetime(df['timestamp'][0])
-        end_time = parse_time_to_datetime(df['timestamp'][len(df['timestamp']) - 1])
+        end_time = parse_time_to_datetime(df['timestamp'][len(df['timestamp'])-1])
 
         delta_start, delta_end = get_delta(start_time, time_from, end_time, time_to)
 
@@ -105,6 +109,7 @@ class PreProcessData(object):
                                                                                 stratify=target,
                                                                                 shuffle=True,
                                                                                 random_state=10)
+        self.df.describe(include='all')
 
     def standardize(self):
         num_features = ['channel1', 'channel2', 'channel3', 'channel4', 'channel5', 'channel6',
@@ -136,4 +141,4 @@ def do_classify(foldername):
                 continue
             ClassifyCsv("{}\\{}".format(dirpath, filename), "1" if "-k" in filename else "0")
 
-do_classify("RawData")
+# do_classify("RawData")
